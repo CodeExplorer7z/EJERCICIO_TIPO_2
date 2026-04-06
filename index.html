@@ -3,94 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Ruso Blast Universal</title>
+    <title>Ruso Blast Honor Compact</title>
     <style>
         :root {--bg:#03051a; --blue:#353cff; --white:#fff; --green:#58cc02; --red:#ea2b2b; --sky:#1cb0f6;}
         * {box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0;}
         
         body {
-            background: var(--bg); color: var(--white); font-family: 'Segoe UI', Roboto, sans-serif;
-            overflow: hidden; display: flex; justify-content: center; align-items: center;
-            height: 100vh; height: -webkit-fill-available; touch-action: none;
+            background: var(--bg); color: var(--white); font-family: sans-serif;
+            overflow: hidden; display: flex; justify-content: center;
+            height: 100vh; touch-action: none;
         }
 
         #game-wrapper {
-            position: relative; width: 100%; max-width: 450px; height: 100%;
+            position: relative; width: 100%; max-width: 400px; height: 100%;
             display: flex; flex-direction: column;
             background: radial-gradient(circle at top, #10143a 0%, var(--bg) 100%);
         }
 
-        /* --- PANTALLAS --- */
         #levels-screen, #overlay {
             position: absolute; inset: 0; background: var(--bg); z-index: 100;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 10%; text-align: center;
+            display: flex; flex-direction: column; justify-content: center; padding: 15px;
         }
         #overlay { display: none; }
 
         .level-card {
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            padding: 20px; border-radius: 20px; margin-bottom: 15px; width: 100%;
-            cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+            padding: 15px; border-radius: 12px; margin-bottom: 10px; width: 100%;
+            display: flex; align-items: center; justify-content: space-between;
         }
 
-        /* --- HEADER --- */
-        #header { padding: env(safe-area-inset-top, 20px) 10px 10px; text-align: center; z-index: 10; }
-        #score-val { font-weight: 900; font-size: 3rem; text-shadow: 0 0 15px var(--blue); }
+        #header { padding: 10px 5px 0; text-align: center; }
+        #game-title { color: var(--green); font-size: 1.1rem; font-weight: 900; }
+        #score-val { font-weight: 900; font-size: 2.2rem; text-shadow: 0 0 10px var(--blue); }
         
-        #pop-anchor { position: relative; width: 100%; display: flex; justify-content: center; }
-        .points-pop {
-            position: absolute; font-weight: 900; font-size: 1.5rem;
-            animation: popUp 1.5s forwards; opacity: 0; pointer-events: none;
-        }
-        @keyframes popUp { 0%{opacity:0; transform:translateY(0);} 20%{opacity:1;} 100%{transform:translateY(-40px); opacity:0;} }
+        #pop-anchor { position: relative; height: 0; width: 100%; }
+        .points-pop { position: absolute; left: 50%; transform: translateX(-50%); font-weight: 900; font-size: 1.2rem; animation: popUp 1s forwards; }
+        @keyframes popUp { 0%{opacity:0;} 20%{opacity:1;} 100%{transform:translateY(-30px); opacity:0;} }
 
-        /* --- ZONA DE JUEGO --- */
-        #play-area { position: relative; flex-grow: 1; overflow: hidden; width: 100%; }
-        #ceiling-line {
-            position: absolute; top: 0; width: 100%; height: 3px;
-            background: linear-gradient(90deg, transparent, var(--red), transparent);
-            box-shadow: 0 0 10px var(--red); opacity: 0.8;
+        /* --- REDUCCIÓN DEL AREA DE RECORRIDO --- */
+        #play-area { 
+            position: relative; 
+            flex: 0 1 35vh; /* Limitamos el alto del área donde se mueve la frase */
+            overflow: hidden; 
+            width: 100%; 
+            margin: 10px 0;
         }
+        #ceiling-line { position: absolute; top: 0; width: 100%; height: 2px; background: var(--red); box-shadow: 0 0 5px var(--red); }
 
         .russian-phrase {
-            position: absolute; bottom: -100px; left: 50%; transform: translateX(-50%);
-            width: 85%; background: var(--white); padding: 15px; border-radius: 20px;
-            box-shadow: 0 0 25px rgba(0,0,0,0.6); color: #03051a;
-            font-size: 1.2rem; font-weight: 800; text-align: center; z-index: 5;
-            white-space: normal; word-wrap: break-word;
+            position: absolute; 
+            bottom: -60px; /* Aparece más cerca del borde inferior del área */
+            left: 50%; transform: translateX(-50%);
+            width: 80%; background: var(--white); padding: 10px; border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.6); color: #03051a;
+            font-size: 1rem; font-weight: 800; text-align: center; z-index: 5;
         }
 
-        /* --- CONTROLES INFERIORES --- */
-        #controls {
-            padding: 20px 20px calc(env(safe-area-inset-bottom, 20px) + 10px);
-            background: rgba(3, 5, 26, 0.95); border-radius: 30px 30px 0 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        #controls { padding: 10px 10px 25px; background: rgba(3, 5, 26, 0.95); flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
 
-        .blast-btn {
-            background: var(--blue); color: var(--white); padding: 18px;
-            font-size: 1.1rem; font-weight: bold; border: none; border-radius: 20px;
-            cursor: pointer; box-shadow: 0 5px 0 #1a1eb3; width: 100%;
-            transition: transform 0.1s;
-        }
-        .blast-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #1a1eb3; }
-
-        .correct-flash { background: var(--green) !important; box-shadow: 0 5px 0 #3d8c02 !important; }
-        .wrong-flash { background: var(--red) !important; box-shadow: 0 5px 0 #a31d1d !important; }
+        .blast-btn { background: var(--blue); color: var(--white); padding: 14px; font-size: 0.95rem; font-weight: bold; border: none; border-radius: 12px; box-shadow: 0 3px 0 #1a1eb3; width: 100%; }
+        .correct-flash { background: var(--green) !important; box-shadow: 0 3px 0 #3d8c02 !important; }
+        .wrong-flash { background: var(--red) !important; box-shadow: 0 3px 0 #a31d1d !important; }
     </style>
 </head>
 <body>
     <div id="game-wrapper">
         <div id="levels-screen">
-            <h1 style="color:var(--green); font-size:2.2rem; margin-bottom:5px;">RUSO BLAST</h1>
-            <p style="color:#afb1be; margin-bottom:40px;">Entrena tu ruso ahora</p>
-            <div class="level-card" onclick="prepareGame(1)"><div style="text-align:left;"><b style="color:var(--sky); font-size:1.3rem;">BLOQUE 1</b><br><small>Lecciones 1-10</small></div><div style="color:var(--green); font-size:1.5rem;">➜</div></div>
-            <div class="level-card" onclick="prepareGame(2)"><div style="text-align:left;"><b style="color:var(--sky); font-size:1.3rem;">BLOQUE 2</b><br><small>Lecciones 11-20</small></div><div style="color:var(--green); font-size:1.5rem;">➜</div></div>
+            <h1 style="color:var(--green); margin-bottom:15px; font-size: 1.8rem;">RUSO BLAST</h1>
+            <div class="level-card" onclick="prepareGame(1)"><div><b style="color:var(--sky);">BLOQUE 1</b><br><small>1 a 10</small></div><div>➜</div></div>
+            <div class="level-card" onclick="prepareGame(2)"><div><b style="color:var(--sky);">BLOQUE 2</b><br><small>11 a 20</small></div><div>➜</div></div>
         </div>
 
         <div id="header">
+            <div id="game-title">RUSO BLAST</div>
             <div id="score-val">0</div>
             <div id="pop-anchor"></div>
         </div>
@@ -103,10 +89,9 @@
         <div id="controls"><div class="options-grid" id="options"></div></div>
 
         <div id="overlay">
-            <h2 style="font-size:2.5rem; color:var(--green);">¡BIEN HECHO!</h2>
-            <p id="ov-msg" style="font-size:1.5rem; margin:20px 0;"></p>
-            <button class="blast-btn" style="background:var(--green); box-shadow:0 5px 0 #46a302;" onclick="startGame()">OTRA VEZ</button>
-            <button class="blast-btn" style="margin-top:15px; background:transparent; border:2px solid #444; box-shadow:none;" onclick="returnToMenu()">CAMBIAR BLOQUE</button>
+            <h2 id="ov-msg" style="font-size:1.8rem; margin-bottom:15px;"></h2>
+            <button class="blast-btn" style="background:var(--green); box-shadow:0 3px 0 #46a302;" onclick="startGame()">REINTENTAR</button>
+            <button class="blast-btn" style="margin-top:8px; background:transparent; border:1px solid #444; box-shadow:none;" onclick="returnToMenu()">MENU</button>
         </div>
     </div>
 
@@ -120,18 +105,17 @@
             {r:"Кстати, где мой чай?", s:"Por cierto, ¿dónde está mi té?"},{r:"Ладно, давай сделаем это", s:"Está bien, hagámoslo"},
             {r:"Ничего, всё нормально", s:"No es nada, todo bien"},{r:"Осталось мало времени", s:"Queda poco tiempo"},
             {r:"Слышишь, что он говорит?", s:"¿Oyes lo que él dice?"},{r:"Тебе очень идёт это платье!", s:"¡Te queda muy bien ese vestido!"},
-            {r:"Ясненько, я всё сделаю", s:"Vale, yo me encargo de todo"},{r:"Капец, как tu холодно!", s:"¡Vaya, qué frío hace aquí!"},
+            {r:"Ясненько, я всё сделаю", s:"Vale, yo me encargo de todo"},{r:"Капец, как тут холодно!", s:"¡Vaya, qué frío hace aquí!"},
             {r:"Блин, я забыл ключи", s:"Rayos, olvidé las llaves"},{r:"Как дела?", s:"¿Cómo estás?"},
             {r:"Лучше всех", s:"Mejor que todos"},{r:"Всё пучком", s:"Todo va de maravilla"}
         ];
 
         function initAudio(){ if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); }
-        
-        function playDuoSound(isCorrect){
-            const notes = isCorrect ? [523, 659, 783, 1046] : [220, 180];
-            notes.forEach((f, i) => {
+        function playSnd(isC){
+            const n = isC ? [523, 659, 783, 1046] : [220, 180];
+            n.forEach((f, i) => {
                 const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-                o.type = isCorrect ? 'triangle' : 'sawtooth';
+                o.type = isC ? 'triangle' : 'sawtooth';
                 o.frequency.setValueAtTime(f, audioCtx.currentTime + (i * 0.08));
                 g.gain.setValueAtTime(0.1, audioCtx.currentTime + (i * 0.08));
                 g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (i * 0.08) + 0.4);
@@ -142,11 +126,11 @@
 
         function showPop(txt, col){
             const a=document.getElementById('pop-anchor'), p=document.createElement('div');
-            p.className='points-pop'; p.innerText=txt; p.style.color=col; p.style.left = (Math.random() * 40 + 30) + "%";
-            a.appendChild(p); setTimeout(()=>p.remove(),1500);
+            p.className='points-pop'; p.innerText=txt; p.style.color=col;
+            a.appendChild(p); setTimeout(()=>p.remove(),1000);
         }
         
-        function returnToMenu(){ clearInterval(ceilingCheck); document.getElementById('overlay').style.display='none'; document.getElementById('levels-screen').style.display='flex'; phrasesAnswered=0; score=0; document.getElementById('score-val').innerText="0"; }
+        function returnToMenu(){ clearInterval(ceilingCheck); document.getElementById('overlay').style.display='none'; document.getElementById('levels-screen').style.display='flex'; }
         function prepareGame(b){ initAudio(); activeData=(b===1)?allPhrases.slice(0,10):allPhrases.slice(10,20); document.getElementById('levels-screen').style.display='none'; startGame(); }
         function startGame(){ score=0; phrasesAnswered=0; document.getElementById('score-val').innerText="0"; document.getElementById('overlay').style.display='none'; nextQuestion(); }
 
@@ -168,31 +152,30 @@
             }); 
 
             setTimeout(() => {
-                const travel = document.getElementById('play-area').offsetHeight + 100;
-                pEl.style.transition='transform 6s linear'; 
+                const travel = document.getElementById('play-area').offsetHeight + 60;
+                pEl.style.transition='transform 5s linear'; // Un poco más rápido por ser menos trayecto
                 pEl.style.transform=`translateX(-50%) translateY(-${travel}px)`; 
                 canAnswer=true; 
                 ceilingCheck=setInterval(() => {
-                    const pR=pEl.getBoundingClientRect(); 
-                    if(pR.top < 80 && canAnswer) fail();
+                    if(pEl.getBoundingClientRect().top < document.getElementById('play-area').getBoundingClientRect().top && canAnswer) fail();
                 }, 50);
-            }, 400);
+            }, 300);
         }
 
         function check(c,b){
             if(!canAnswer) return; canAnswer=false; clearInterval(ceilingCheck); 
-            if(c){ playDuoSound(true); score+=20; b.classList.add('correct-flash'); showPop("+20","var(--sky)"); }
-            else{ playDuoSound(false); score=Math.max(0,score-10); b.classList.add('wrong-flash'); showPop("-10","var(--red)"); } 
+            if(c){ playSnd(true); score+=20; b.classList.add('correct-flash'); showPop("+20","var(--sky)"); }
+            else{ playSnd(false); score=Math.max(0,score-10); b.classList.add('wrong-flash'); showPop("-10","var(--red)"); } 
             phrasesAnswered++; document.getElementById('score-val').innerText=score; 
-            setTimeout(nextQuestion, 800);
+            setTimeout(nextQuestion, 700);
         }
 
         function fail(){
             canAnswer=false; clearInterval(ceilingCheck); 
-            playDuoSound(false); score=Math.max(0,score-10); 
+            playSnd(false); score=Math.max(0,score-10); 
             showPop("-10","var(--red)"); phrasesAnswered++; 
             document.getElementById('score-val').innerText=score; 
-            setTimeout(nextQuestion, 800);
+            setTimeout(nextQuestion, 700);
         }
 
         function endGame(){ document.getElementById('overlay').style.display='flex'; document.getElementById('ov-msg').innerText="Puntos: "+score; }
