@@ -3,305 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ruso Blast - Línea Límite</title>
+    <title>Ruso Blast Honor</title>
     <style>
-        :root {
-            --bg-dark: #03051a;      
-            --primary-blue: #353cff; 
-            --text-main: #ffffff;
-            --duo-green: #58cc02;
-            --duo-red: #ea2b2b;
-            --duo-sky: #1cb0f6;
-        }
-
-        body {
-            margin: 0; padding: 0;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            height: 100vh; align-items: center;
-            touch-action: manipulation;
-        }
-
-        #game-wrapper {
-            position: relative;
-            width: 100%; max-width: 420px;
-            height: 100%; display: flex; flex-direction: column;
-            background: radial-gradient(circle at top, #10143a 0%, var(--bg-dark) 100%);
-        }
-
-        /* --- PANTALLAS --- */
-        #levels-screen, #overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark); z-index: 100;
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; padding: 20px; text-align: center; box-sizing: border-box;
-        }
-        #overlay { display: none; }
-
-        .level-card {
-            background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.1);
-            padding: 22px; border-radius: 24px; margin-bottom: 15px; width: 100%;
-            cursor: pointer; display: flex; align-items: center; justify-content: space-between;
-        }
-
-        /* --- CABECERA --- */
-        #header { padding: 30px 15px 10px; text-align: center; position: relative; z-index: 10; }
-        #score-val { font-weight: 900; font-size: 2.8rem; color: white; text-shadow: 0 0 20px var(--primary-blue); }
-
-        .points-pop {
-            position: absolute; right: -55px; top: 10px;
-            font-weight: 900; font-size: 1.5rem;
-            animation: popUp 2s forwards; opacity: 0; pointer-events: none;
-        }
-        @keyframes popUp {
-            0% { transform: translateY(0); opacity: 0; }
-            20% { transform: translateY(-15px); opacity: 1; }
-            100% { transform: translateY(-40px); opacity: 0; }
-        }
-
-        /* --- AREA DE JUEGO Y LÍNEA LÍMITE --- */
-        #play-area { 
-            position: relative; 
-            flex-grow: 1; 
-            overflow: hidden; 
-            display: flex; 
-            justify-content: center; 
-        }
-
-        /* ESTA ES LA LÍNEA DEL TECHO */
-        #ceiling-line {
-            position: absolute;
-            top: 5px; /* Justo debajo del header */
-            width: 90%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--duo-red), transparent);
-            box-shadow: 0 0 10px var(--duo-red);
-            border-radius: 10px;
-            z-index: 2;
-            opacity: 0.6;
-        }
-
-        .russian-phrase {
-            position: absolute; bottom: -120px;
-            width: fit-content; max-width: 85%;
-            background: white; padding: 18px 28px; border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            color: #03051a; font-size: 1.2rem; font-weight: 800;
-            text-align: center; z-index: 5;
-        }
-
-        /* --- CONTROLES --- */
-        #controls { padding: 25px 20px; background: rgba(3, 5, 26, 0.8); backdrop-filter: blur(10px); }
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-
-        .blast-btn {
-            background-color: var(--primary-blue);
-            color: white; padding: 18px; font-size: 1.1rem; font-weight: bold;
-            border: none; border-radius: 40px; cursor: pointer;
-            transition: all 0.2s; width: 100%;
-            box-shadow: 0 4px 0 #2b30cc;
-        }
-
-        .correct-flash { background-color: var(--duo-green) !important; color: #fff !important; transform: scale(1.05); }
-        .wrong-flash { background-color: var(--duo-red) !important; color: #fff !important; }
+        :root {--bg:#03051a; --blue:#353cff; --white:#fff; --green:#58cc02; --red:#ea2b2b; --sky:#1cb0f6;}
+        body {margin:0; padding:0; background:var(--bg); color:var(--white); font-family:sans-serif; overflow:hidden; display:flex; flex-direction:column; height:100vh; align-items:center; touch-action:manipulation;}
+        #game-wrapper {position:relative; width:100%; max-width:420px; height:100%; display:flex; flex-direction:column; background:radial-gradient(circle at top, #10143a 0%, var(--bg) 100%);}
+        #levels-screen, #overlay {position:absolute; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:100; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; text-align:center; box-sizing:border-box;}
+        #overlay {display:none;}
+        .level-card {background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); padding:20px; border-radius:20px; margin-bottom:15px; width:100%; cursor:pointer; display:flex; align-items:center; justify-content:space-between;}
+        #header {padding:20px 15px 5px; text-align:center; position:relative; z-index:10;}
+        #score-val {font-weight:900; font-size:2.4rem; text-shadow:0 0 15px var(--blue);}
+        .points-pop {position:absolute; right:-45px; top:5px; font-weight:900; font-size:1.2rem; animation:popUp 2s forwards; opacity:0; pointer-events:none;}
+        @keyframes popUp {0% {opacity:0;} 20% {opacity:1;} 100% {transform:translateY(-30px); opacity:0;}}
+        #play-area {position:relative; flex-grow:1; overflow:hidden; display:flex; justify-content:center;}
+        #ceiling-line {position:absolute; top:5px; width:90%; height:3px; background:linear-gradient(90deg, transparent, var(--red), transparent); box-shadow:0 0 8px var(--red); opacity:0.6;}
+        .russian-phrase {position:absolute; bottom:-120px; width:fit-content; max-width:85%; background:#fff; padding:15px 22px; border-radius:18px; box-shadow:0 0 25px rgba(0,0,0,0.5); color:#03051a; font-size:1.1rem; font-weight:800; text-align:center; z-index:5;}
+        #controls {padding:20px; background:rgba(3,5,26,0.8); backdrop-filter:blur(5px);}
+        .options-grid {display:grid; grid-template-columns:1fr; gap:10px;}
+        .blast-btn {background:var(--blue); color:#fff; padding:16px; font-size:1rem; font-weight:bold; border:none; border-radius:35px; cursor:pointer; box-shadow:0 4px 0 #2b30cc; width:100%;}
+        .correct-flash {background:var(--green)!important; transform:scale(1.03);}
+        .wrong-flash {background:var(--red)!important;}
     </style>
 </head>
 <body>
-
     <div id="game-wrapper">
         <div id="levels-screen">
-            <h1 style="font-weight: 900; font-size: 2.2rem; color: var(--duo-green);">RUSO BLAST</h1>
-            <p style="color: #afb1be; margin-bottom: 40px;">Entrena tu oído ruso</p>
-            <div class="level-card" onclick="prepareGame(1)">
-                <div style="text-align:left;"><b style="color:var(--duo-sky);">BLOQUE 1</b><br><small style="color:#888;">Frases 1 a 10</small></div>
-                <div style="color:var(--duo-green); font-size:1.5rem;">➜</div>
-            </div>
-            <div class="level-card" onclick="prepareGame(2)">
-                <div style="text-align:left;"><b style="color:var(--duo-sky);">BLOQUE 2</b><br><small style="color:#888;">Frases 11 a 20</small></div>
-                <div style="color:var(--duo-green); font-size:1.5rem;">➜</div>
-            </div>
+            <h1 style="font-size:1.8rem; color:var(--green);">RUSO BLAST</h1>
+            <p style="color:#afb1be; margin-bottom:25px;">Selecciona un bloque</p>
+            <div class="level-card" onclick="prepareGame(1)"><div style="text-align:left;"><b style="color:var(--sky);">BLOQUE 1</b><br><small>Frases 1-10</small></div><div style="color:var(--green);">➜</div></div>
+            <div class="level-card" onclick="prepareGame(2)"><div style="text-align:left;"><b style="color:var(--sky);">BLOQUE 2</b><br><small>Frases 11-20</small></div><div style="color:var(--green);">➜</div></div>
         </div>
-
-        <div id="header">
-            <div id="score-container">
-                <div id="score-val">0</div>
-                <div id="pop-anchor"></div> 
-            </div>
-        </div>
-
-        <div id="play-area">
-            <div id="ceiling-line"></div> <div id="phrase-display" class="russian-phrase"></div>
-        </div>
-        
+        <div id="header"><div id="score-container"><div id="score-val">0</div><div id="pop-anchor"></div></div></div>
+        <div id="play-area"><div id="ceiling-line"></div><div id="phrase-display" class="russian-phrase"></div></div>
         <div id="controls"><div class="options-grid" id="options"></div></div>
-
         <div id="overlay">
-            <h1 style="font-size: 2.5rem; color: var(--duo-green);">¡EXCELENTE!</h1>
-            <p id="ov-msg" style="color: #afb1be; font-size: 1.3rem; margin-bottom: 30px;"></p>
-            <button class="blast-btn" style="width:240px; background-color: var(--duo-green); box-shadow: 0 4px 0 #46a302;" onclick="startGame()">CONTINUAR</button>
-            <button class="blast-btn" style="width:240px; margin-top:10px; background:transparent; border:2px solid #333; box-shadow:none;" onclick="returnToMenu()">MENU</button>
+            <h2 style="color:var(--green);">¡NIVEL LISTO!</h2>
+            <p id="ov-msg" style="color:#afb1be;"></p>
+            <button class="blast-btn" style="background:var(--green); box-shadow:0 4px 0 #46a302;" onclick="startGame()">REINTENTAR</button>
+            <button class="blast-btn" style="margin-top:10px; background:transparent; border:1px solid #333; box-shadow:none;" onclick="returnToMenu()">MENÚ</button>
         </div>
     </div>
-
     <script>
-        let audioCtx = null;
-        let score = 0, phrasesAnswered = 0, activeData = [], ceilingCheck, canAnswer = false;
-
+        let audioCtx=null, score=0, phrasesAnswered=0, activeData=[], ceilingCheck, canAnswer=false;
         const allPhrases = [
-            { r: "Привет, как тебя зовут?", s: "¿Hola, cómo te llamas?" },
-            { r: "Я знаю это место", s: "Yo conozco este lugar" },
-            { r: "Я думаю, это хорошая идея", s: "Pienso que es una buena idea" },
-            { r: "Это длинное слово", s: "Esta es una palabra muy larga" },
-            { r: "Подожди, я сейчас приду", s: "Espera, ahora vengo" },
-            { r: "Давай пойдём в парк", s: "Vamos al parque" },
-            { r: "Я всё понял, спасибо", s: "Lo entendí todo, gracias" },
-            { r: "Короче, мы опоздали", s: "En fin, llegamos tarde" },
-            { r: "Кстати, где мой чай?", s: "Por cierto, ¿dónde está mi té?" },
-            { r: "Ладно, давай сделаем это", s: "Está bien, hagámoslo" },
-            { r: "Ничего, всё нормально", s: "No es nada, todo bien" },
-            { r: "Осталось мало времени", s: "Queda poco tiempo" },
-            { r: "Слышишь, что он говорит?", s: "¿Oyes lo que él dice?" },
-            { r: "Тебе очень идёт это платье!", s: "¡Te queda muy bien ese vestido!" },
-            { r: "Ясненько, я всё сделаю", s: "Vale, yo me encargo de todo" },
-            { r: "Капец, как тут холодно!", s: "¡Vaya, qué frío hace aquí!" },
-            { r: "Блин, я забыл ключи", s: "Rayos, olvidé las llaves" },
-            { r: "Как дела?", s: "¿Cómo estás?" },
-            { r: "Лучше всех", s: "Mejor que todos" },
-            { r: "Всё пучком", s: "Todo va de maravilla" }
+            {r:"Привет, как тебя зовут?", s:"¿Hola, cómo te llamas?"},{r:"Я знаю это место", s:"Yo conozco este lugar"},
+            {r:"Я думаю, это хорошая идея", s:"Pienso que es una buena idea"},{r:"Это длинное слово", s:"Esta es una palabra muy larga"},
+            {r:"Подожди, я сейчас приду", s:"Espera, ahora vengo"},{r:"Давай пойдём в парк", s:"Vamos al parque"},
+            {r:"Я всё понял, спасибо", s:"Lo entendí todo, gracias"},{r:"Короче, мы опоздали", s:"En fin, llegamos tarde"},
+            {r:"Кстати, где мой чай?", s:"Por cierto, ¿dónde está mi té?"},{r:"Ладно, давай сделаем это", s:"Está bien, hagámoslo"},
+            {r:"Ничего, всё нормально", s:"No es nada, todo bien"},{r:"Осталось мало времени", s:"Queda poco tiempo"},
+            {r:"Слышишь, что он говорит?", s:"¿Oyes lo que él dice?"},{r:"Тебе очень идёт это платье!", s:"¡Te queda muy bien ese vestido!"},
+            {r:"Ясненько, я всё сделаю", s:"Vale, yo me encargo de todo"},{r:"Капец, как тут холодно!", s:"¡Vaya, qué frío hace aquí!"},
+            {r:"Блин, я забыл ключи", s:"Rayos, olvidé las llaves"},{r:"Как дела?", s:"¿Cómo estás?"},
+            {r:"Лучше всех", s:"Mejor que todos"},{r:"Всё пучком", s:"Todo va de maravilla"}
         ];
-
-        function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        }
-
-        function playDuoCorrect() {
-            const notes = [523.25, 659.25, 783.99, 1046.50];
-            notes.forEach((f, i) => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(f, audioCtx.currentTime + (i * 0.08));
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime + (i * 0.08));
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (i * 0.08) + 0.4);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(audioCtx.currentTime + (i * 0.08)); osc.stop(audioCtx.currentTime + (i * 0.08) + 0.4);
-            });
-        }
-
-        function playDuoWrong() {
-            const notes = [220, 180];
-            notes.forEach((f, i) => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(f, audioCtx.currentTime + (i * 0.1));
-                gain.gain.setValueAtTime(0.08, audioCtx.currentTime + (i * 0.1));
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (i * 0.1) + 0.5);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(audioCtx.currentTime + (i * 0.1)); osc.stop(audioCtx.currentTime + (i * 0.1) + 0.5);
-            });
-        }
-
-        function showPop(text, color) {
-            const anchor = document.getElementById('pop-anchor');
-            const pop = document.createElement('div');
-            pop.className = 'points-pop'; pop.innerText = text; pop.style.color = color;
-            anchor.appendChild(pop); setTimeout(() => pop.remove(), 2000);
-        }
-
-        function returnToMenu() {
-            clearInterval(ceilingCheck);
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('levels-screen').style.display = 'flex';
-            document.getElementById('phrase-display').innerText = "";
-            document.getElementById('options').innerHTML = "";
-            phrasesAnswered = 0; score = 0;
-            document.getElementById('score-val').innerText = "0";
-        }
-
-        function prepareGame(block) {
-            initAudio();
-            activeData = (block === 1) ? allPhrases.slice(0, 10) : allPhrases.slice(10, 20);
-            document.getElementById('levels-screen').style.display = 'none';
-            startGame();
-        }
-
-        function startGame() {
-            score = 0; phrasesAnswered = 0;
-            document.getElementById('score-val').innerText = "0";
-            document.getElementById('overlay').style.display = 'none';
-            nextQuestion();
-        }
-
-        function nextQuestion() {
-            if (phrasesAnswered >= 10) { endGame(); return; }
-            canAnswer = false; clearInterval(ceilingCheck);
-            const item = activeData[phrasesAnswered];
-            const phraseEl = document.getElementById('phrase-display');
-            phraseEl.style.transition = 'none'; phraseEl.style.transform = 'translateY(0)';
-            phraseEl.innerText = item.r;
-            
-            const optionsEl = document.getElementById('options');
-            optionsEl.innerHTML = '';
-            let wrong = allPhrases[Math.floor(Math.random()*allPhrases.length)];
-            while(wrong.s === item.s) wrong = allPhrases[Math.floor(Math.random()*allPhrases.length)];
-
-            [{s:item.s, c:true}, {s:wrong.s, c:false}].sort(()=>Math.random()-0.5).forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'blast-btn'; btn.style.opacity = "0.3"; btn.innerText = opt.s;
-                btn.onclick = () => checkAnswer(opt.c, btn);
-                optionsEl.appendChild(btn);
-            });
-
-            setTimeout(() => {
-                phraseEl.style.transition = 'transform 6s linear';
-                phraseEl.style.transform = `translateY(-750px)`;
-                canAnswer = true;
-                document.querySelectorAll('.blast-btn').forEach(b => b.style.opacity = "1");
-                
-                // DETECCIÓN DE COLISIÓN CON LA LÍNEA
-                ceilingCheck = setInterval(() => {
-                    const phraseRect = phraseEl.getBoundingClientRect();
-                    const lineRect = document.getElementById('ceiling-line').getBoundingClientRect();
-                    
-                    if(phraseRect.top < lineRect.bottom && canAnswer) {
-                        handleFail(phraseEl);
-                    }
-                }, 50);
-            }, 400);
-        }
-
-        function checkAnswer(correct, btn) {
-            if(!canAnswer) return; canAnswer = false; clearInterval(ceilingCheck);
-            if(correct) {
-                playDuoCorrect(); score += 20;
-                btn.classList.add('correct-flash'); showPop("+20", "var(--duo-sky)");
-            } else {
-                playDuoWrong(); score = Math.max(0, score-10);
-                btn.classList.add('wrong-flash'); showPop("-10", "var(--duo-red)");
-            }
-            phrasesAnswered++; updateScore();
-            setTimeout(nextQuestion, 800);
-        }
-
-        function handleFail(el) {
-            canAnswer = false; clearInterval(ceilingCheck);
-            playDuoWrong(); score = Math.max(0, score-10);
-            showPop("-10", "var(--duo-red)");
-            phrasesAnswered++; updateScore();
-            setTimeout(nextQuestion, 800);
-        }
-
-        function updateScore() { document.getElementById('score-val').innerText = score; }
-
-        function endGame() {
-            document.getElementById('overlay').style.display = 'flex';
-            document.getElementById('ov-msg').innerText = "Balance final: " + score + " puntos";
-        }
+        function initAudio(){if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume();}
+        function playSnd(notes, type, gainVal){notes.forEach((f,i)=>{const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type=type; o.frequency.setValueAtTime(f,audioCtx.currentTime+(i*0.08)); g.gain.setValueAtTime(gainVal,audioCtx.currentTime+(i*0.08)); g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+(i*0.08)+0.4); o.connect(g); g.connect(audioCtx.destination); o.start(audioCtx.currentTime+(i*0.08)); o.stop(audioCtx.currentTime+(i*0.08)+0.4);});}
+        function showPop(txt, col){const a=document.getElementById('pop-anchor'), p=document.createElement('div'); p.className='points-pop'; p.innerText=txt; p.style.color=col; a.appendChild(p); setTimeout(()=>p.remove(),2000);}
+        function returnToMenu(){clearInterval(ceilingCheck); document.getElementById('overlay').style.display='none'; document.getElementById('levels-screen').style.display='flex'; document.getElementById('phrase-display').innerText=""; document.getElementById('options').innerHTML=""; phrasesAnswered=0; score=0; document.getElementById('score-val').innerText="0";}
+        function prepareGame(b){initAudio(); activeData=(b===1)?allPhrases.slice(0,10):allPhrases.slice(10,20); document.getElementById('levels-screen').style.display='none'; startGame();}
+        function startGame(){score=0; phrasesAnswered=0; document.getElementById('score-val').innerText="0"; document.getElementById('overlay').style.display='none'; nextQuestion();}
+        function nextQuestion(){if(phrasesAnswered>=10){endGame(); return;} canAnswer=false; clearInterval(ceilingCheck); const item=activeData[phrasesAnswered]; const pEl=document.getElementById('phrase-display'); pEl.style.transition='none'; pEl.style.transform='translateY(0)'; pEl.innerText=item.r; const oEl=document.getElementById('options'); oEl.innerHTML=''; let w=allPhrases[Math.floor(Math.random()*allPhrases.length)]; while(w.s===item.s) w=allPhrases[Math.floor(Math.random()*allPhrases.length)]; [{s:item.s,c:true},{s:w.s,c:false}].sort(()=>Math.random()-0.5).forEach(o=>{const b=document.createElement('button'); b.className='blast-btn'; b.style.opacity="0.3"; b.innerText=o.s; b.onclick=()=>check(o.c,b); oEl.appendChild(b);}); setTimeout(()=>{pEl.style.transition='transform 6s linear'; pEl.style.transform='translateY(-750px)'; canAnswer=true; document.querySelectorAll('.blast-btn').forEach(b=>b.style.opacity="1"); ceilingCheck=setInterval(()=>{const pR=pEl.getBoundingClientRect(), lR=document.getElementById('ceiling-line').getBoundingClientRect(); if(pR.top<lR.bottom && canAnswer) fail(pEl);},50);},400);}
+        function check(c,b){if(!canAnswer) return; canAnswer=false; clearInterval(ceilingCheck); if(c){playSnd([523,659,783,1046],'triangle',0.1); score+=20; b.classList.add('correct-flash'); showPop("+20","var(--sky)");}else{playSnd([220,180],'sawtooth',0.08); score=Math.max(0,score-10); b.classList.add('wrong-flash'); showPop("-10","var(--red)");} phrasesAnswered++; document.getElementById('score-val').innerText=score; setTimeout(nextQuestion,800);}
+        function fail(e){canAnswer=false; clearInterval(ceilingCheck); playSnd([220,180],'sawtooth',0.08); score=Math.max(0,score-10); showPop("-10","var(--red)"); phrasesAnswered++; document.getElementById('score-val').innerText=score; setTimeout(nextQuestion,800);}
+        function endGame(){document.getElementById('overlay').style.display='flex'; document.getElementById('ov-msg').innerText="Puntos: "+score;}
     </script>
 </body>
 </html>
