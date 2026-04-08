@@ -1,353 +1,120 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Ruso Blast Pro</title>
-    <style>
-        :root {
-            --bg: #0a0b1e;
-            --surface: #161b33;
-            --blue: #353cff;
-            --white: #ffffff;
-            --green: #58cc02;
-            --red: #ff4b4b;
-            --sky: #1cb0f6;
-            --gray: #afafaf;
-        }
+<style>
+    :root {
+        --bg: #0a0b1e;
+        --surface: #161b33;
+        --blue: #353cff;
+        --white: #ffffff;
+        --green: #58cc02;
+        --red: #ff4b4b;
+        --sky: #1cb0f6;
+        --gray: #afafaf;
+    }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        
-        body {
-            background: var(--bg);
-            color: var(--white);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            height: 100vh;
-            touch-action: none;
-        }
+    * { 
+        box-sizing: border-box; 
+        -webkit-tap-highlight-color: transparent; 
+        margin: 0; padding: 0; 
+    }
+    
+    body {
+        background: var(--bg);
+        color: var(--white);
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        /* Usamos dvh para que se adapte dinámicamente si la barra de Edge sube o baja */
+        height: 100vh;
+        height: 100dvh; 
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        /* Evita rebotes elásticos en móviles */
+        position: fixed;
+        width: 100%;
+    }
 
-        #game-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 450px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            background: radial-gradient(circle at top, #1a1f4d 0%, var(--bg) 100%);
-            border-left: 1px solid rgba(255,255,255,0.05);
-            border-right: 1px solid rgba(255,255,255,0.05);
-        }
+    #game-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 450px;
+        /* Asegura que el contenido use todo el espacio disponible sin salirse */
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: radial-gradient(circle at top, #1a1f4d 0%, var(--bg) 100%);
+        /* Padding inferior extra para evitar la barra de navegación de Edge */
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
 
-        /* --- Pantallas de Interfaz --- */
-        #levels-screen, #overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(10, 11, 30, 0.95);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-        }
-        #overlay { display: none; text-align: center; }
+    #header { 
+        padding: 15px 20px 5px; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+        flex-shrink: 0; /* Evita que el header se aplaste */
+    }
 
-        .level-card {
-            background: var(--surface);
-            border: 2px solid rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: transform 0.2s, border-color 0.2s;
-            cursor: pointer;
-        }
-        .level-card:active { transform: scale(0.98); border-color: var(--sky); }
+    #score-val { font-weight: 900; font-size: 1.8rem; }
 
-        /* --- Header y Score --- */
-        #header { padding: 20px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        #game-title { color: var(--sky); font-size: 0.8rem; font-weight: 900; letter-spacing: 1px; }
-        #score-container { text-align: right; }
-        #score-label { font-size: 0.7rem; color: var(--gray); text-transform: uppercase; }
-        #score-val { font-weight: 900; font-size: 2rem; display: block; }
+    #play-area { 
+        position: relative; 
+        flex: 1; /* El área de juego ocupa el espacio central disponible */
+        overflow: hidden; 
+        margin: 5px 15px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.03);
+    }
 
-        /* --- Área de Juego --- */
-        #play-area { 
-            position: relative; 
-            flex: 1; 
-            overflow: hidden; 
-            margin: 0 15px;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.03);
-        }
-        #ceiling-line { 
-            position: absolute; 
-            top: 0; width: 100%; height: 4px; 
-            background: linear-gradient(90deg, transparent, var(--red), transparent); 
-            box-shadow: 0 0 15px var(--red);
-            z-index: 10;
-        }
+    .russian-phrase {
+        position: absolute; 
+        bottom: -80px;
+        left: 10%; width: 80%; 
+        background: var(--white); 
+        padding: 15px; 
+        border-radius: 18px;
+        color: #03051a;
+        font-size: 1rem; 
+        font-weight: 800; 
+        text-align: center;
+        z-index: 5;
+    }
 
-        .russian-phrase {
-            position: absolute; 
-            bottom: -80px;
-            left: 10%; width: 80%; 
-            background: var(--white); 
-            padding: 18px; 
-            border-radius: 18px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4); 
-            color: #03051a;
-            font-size: 1.1rem; 
-            font-weight: 800; 
-            text-align: center;
-            z-index: 5;
-        }
+    #controls { 
+        padding: 15px 20px; 
+        background: var(--surface); 
+        border-radius: 24px 24px 0 0;
+        flex-shrink: 0; /* Asegura que los botones siempre mantengan su tamaño */
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+    }
 
-        /* --- Controles --- */
-        #controls { 
-            padding: 20px; 
-            background: var(--surface); 
-            border-radius: 24px 24px 0 0;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-        }
-        .instruction {
-            text-align: center; color: var(--gray); font-size: 0.8rem; margin-bottom: 15px;
-        }
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .options-grid { 
+        display: grid; 
+        grid-template-columns: 1fr; 
+        gap: 10px; 
+        margin-top: 10px;
+    }
 
-        .blast-btn { 
-            background: var(--blue); 
-            color: var(--white); 
-            padding: 18px; 
-            font-size: 1rem; 
-            font-weight: bold; 
-            border: none; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 0 #1a1eb3; 
-            transition: all 0.1s;
-            position: relative;
-            overflow: hidden;
-        }
-        .blast-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #1a1eb3; }
+    .blast-btn { 
+        background: var(--blue); 
+        color: var(--white); 
+        padding: 16px; 
+        font-size: 0.95rem; 
+        font-weight: bold; 
+        border: none; 
+        border-radius: 15px; 
+        box-shadow: 0 4px 0 #1a1eb3;
+    }
 
-        /* --- Estados de Respuesta --- */
-        .correct-flash { background: var(--green) !important; box-shadow: 0 4px 0 #3d8c02 !important; }
-        .wrong-flash { background: var(--red) !important; box-shadow: 0 4px 0 #a31d1d !important; }
-
-        /* --- Animaciones --- */
-        #pop-anchor { position: absolute; top: 50%; left: 50%; pointer-events: none; }
-        .points-pop { 
-            position: absolute; transform: translate(-50%, -50%); 
-            font-weight: 900; font-size: 2.5rem; 
-            animation: popUp 0.8s ease-out forwards; 
-            white-space: nowrap;
-        }
-        @keyframes popUp { 
-            0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translate(-50%, -100px) scale(1.2); opacity: 0; } 
-        }
-    </style>
-</head>
-<body>
-    <div id="game-wrapper">
-        <div id="levels-screen">
-            <h1 style="color:var(--white); margin-bottom:5px; font-size: 2.2rem; font-weight: 900;">Ruso<span style="color:var(--sky)">Blast</span></h1>
-            <p style="color:var(--gray); margin-bottom:30px;">Domina frases esenciales</p>
-            
-            <div class="level-card" onclick="prepareGame(1)">
-                <div><b style="color:var(--sky); font-size: 1.1rem;">BLOQUE 1</b><br><small style="color:var(--gray)">Frases básicas de saludo</small></div>
-                <div style="font-size: 1.5rem;">➜</div>
-            </div>
-            <div class="level-card" onclick="prepareGame(2)">
-                <div><b style="color:var(--sky); font-size: 1.1rem;">BLOQUE 2</b><br><small style="color:var(--gray)">Expresiones comunes</small></div>
-                <div style="font-size: 1.5rem;">➜</div>
-            </div>
-        </div>
-
-        <div id="header">
-            <div id="game-title">RUSO BLAST PRO</div>
-            <div id="score-container">
-                <span id="score-label">Puntos</span>
-                <span id="score-val">0</span>
-            </div>
-        </div>
-        
-        <div id="play-area">
-            <div id="ceiling-line"></div>
-            <div id="phrase-display" class="russian-phrase"></div>
-            <div id="pop-anchor"></div>
-        </div>
-
-        <div id="controls">
-            <p class="instruction">TRADUCE LA FRASE ANTES DE QUE TOQUE LA LÍNEA</p>
-            <div class="options-grid" id="options"></div>
-        </div>
-
-        <div id="overlay">
-            <h2 id="ov-msg" style="font-size:2.5rem; margin-bottom:10px;"></h2>
-            <p id="ov-sub" style="margin-bottom:30px; color:var(--gray)"></p>
-            <button class="blast-btn" style="background:var(--green); box-shadow:0 4px 0 #46a302;" onclick="startGame()">REINTENTAR</button>
-            <button class="blast-btn" style="margin-top:12px; background:transparent; border:2px solid #444; box-shadow:none;" onclick="returnToMenu()">MENU PRINCIPAL</button>
-        </div>
-    </div>
-
-    <script>
-        let audioCtx=null, score=0, phrasesAnswered=0, activeData=[], ceilingCheck, canAnswer=false;
-        
-        const allPhrases = [
-            {r:"Привет, как тебя зовут?", s:"¿Hola, cómo te llamas?"},{r:"Я знаю это место", s:"Yo conozco este lugar"},
-            {r:"Я думаю, это хорошая idea", s:"Pienso que es una buena idea"},{r:"Это длинное слово", s:"Esta es una palabra muy larga"},
-            {r:"Подожди, я сейчас приду", s:"Espera, ahora vengo"},{r:"Давай пойдём в парк", s:"Vamos al parque"},
-            {r:"Я всё понял, спасибо", s:"Lo entendí todo, gracias"},{r:"Короче, мы опоздали", s:"En fin, llegamos tarde"},
-            {r:"Кстати, где мой чай?", s:"Por cierto, ¿dónde está mi té?"},{r:"Ладно, давай сделаем это", s:"Está bien, hagámoslo"},
-            {r:"Ничего, всё нормально", s:"No es nada, todo bien"},{r:"Осталось мало времени", s:"Queda poco tiempo"},
-            {r:"Слышишь, что он говорит?", s:"¿Oyes lo que él dice?"},{r:"Тебе очень идёт это платье!", s:"¡Te queda muy bien ese vestido!"},
-            {r:"Ясненько, я всё сделаю", s:"Vale, yo me encargo de todo"},{r:"Капец, как тут холодно!", s:"¡Vaya, qué frío hace aquí!"},
-            {r:"Блин, я забыл ключи", s:"Rayos, olvidé las llaves"},{r:"Как дела?", s:"¿Cómo estás?"},
-            {r:"Лучше всех", s:"Mejor que todos"},{r:"Всё пучком", s:"Todo va de maravilla"}
-        ];
-
-        function initAudio(){ 
-            if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); 
-            if(audioCtx.state==='suspended') audioCtx.resume(); 
-        }
-
-        function playSnd(isC){
-            if(!audioCtx) return;
-            const n = isC ? [523, 659, 783] : [150, 100];
-            n.forEach((f, i) => {
-                const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-                o.type = isC ? 'sine' : 'sawtooth';
-                o.frequency.setValueAtTime(f, audioCtx.currentTime + (i * 0.1));
-                g.gain.setValueAtTime(0.1, audioCtx.currentTime + (i * 0.1));
-                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (i * 0.1) + 0.3);
-                o.connect(g); g.connect(audioCtx.destination);
-                o.start(audioCtx.currentTime + (i * 0.1)); o.stop(audioCtx.currentTime + (i * 0.1) + 0.3);
-            });
-        }
-
-        function showPop(txt, col){
-            const a=document.getElementById('pop-anchor'), p=document.createElement('div');
-            p.className='points-pop'; p.innerText=txt; p.style.color=col;
-            a.appendChild(p); setTimeout(()=>p.remove(),800);
-        }
-        
-        function returnToMenu(){ 
-            clearInterval(ceilingCheck); 
-            document.getElementById('overlay').style.display='none'; 
-            document.getElementById('levels-screen').style.display='flex'; 
-        }
-
-        function prepareGame(b){ 
-            initAudio(); 
-            activeData=(b===1)?allPhrases.slice(0,10):allPhrases.slice(10,20); 
-            // Mezclar las preguntas del bloque
-            activeData = activeData.sort(() => Math.random() - 0.5);
-            document.getElementById('levels-screen').style.display='none'; 
-            startGame(); 
-        }
-
-        function startGame(){ 
-            score=0; phrasesAnswered=0; 
-            document.getElementById('score-val').innerText="0"; 
-            document.getElementById('overlay').style.display='none'; 
-            nextQuestion(); 
-        }
-
-        function nextQuestion(){
-            if(phrasesAnswered >= activeData.length){ endGame(); return; } 
-            
-            canAnswer=false; 
-            clearInterval(ceilingCheck); 
-            
-            const item=activeData[phrasesAnswered]; 
-            const pEl=document.getElementById('phrase-display'); 
-            
-            pEl.style.transition='none'; 
-            pEl.style.transform='translateY(0)'; 
-            pEl.innerText=item.r; 
-            
-            const oEl=document.getElementById('options'); 
-            oEl.innerHTML=''; 
-            
-            // Generar opciones (Correcta + 1 Aleatoria)
-            let wrongItem = allPhrases[Math.floor(Math.random()*allPhrases.length)]; 
-            while(wrongItem.s === item.s) wrongItem = allPhrases[Math.floor(Math.random()*allPhrases.length)]; 
-            
-            const choices = [{s:item.s, c:true}, {s:wrongItem.s, c:false}].sort(() => Math.random() - 0.5);
-            
-            choices.forEach(o => {
-                const b=document.createElement('button'); 
-                b.className='blast-btn'; 
-                b.innerText=o.s; 
-                b.onclick=()=>check(o.c, b); 
-                oEl.appendChild(b);
-            }); 
-
-            setTimeout(() => {
-                const playAreaHeight = document.getElementById('play-area').offsetHeight;
-                const travel = playAreaHeight + 80;
-                // Velocidad progresiva: se vuelve más difícil en cada frase
-                const speed = Math.max(2.5, 5 - (phrasesAnswered * 0.3));
-                
-                pEl.style.transition = `transform ${speed}s linear`; 
-                pEl.style.transform = `translateY(-${travel}px)`; 
-                canAnswer=true; 
-
-                ceilingCheck = setInterval(() => {
-                    const phraseTop = pEl.getBoundingClientRect().top;
-                    const areaTop = document.getElementById('play-area').getBoundingClientRect().top;
-                    if(phraseTop < areaTop && canAnswer) fail();
-                }, 50);
-            }, 100);
-        }
-
-        function check(isCorrect, btn){
-            if(!canAnswer) return; 
-            canAnswer=false; 
-            clearInterval(ceilingCheck); 
-            
-            if(isCorrect){ 
-                playSnd(true); 
-                score += 20; 
-                btn.classList.add('correct-flash'); 
-                showPop("+20", "var(--green)"); 
-            } else { 
-                playSnd(false); 
-                score = Math.max(0, score - 10); 
-                btn.classList.add('wrong-flash'); 
-                showPop("-10", "var(--red)"); 
-            } 
-            
-            updateGameState();
-        }
-
-        function fail(){
-            canAnswer=false; 
-            clearInterval(ceilingCheck); 
-            playSnd(false); 
-            score = Math.max(0, score - 10); 
-            showPop("¡TIEMPO!", "var(--red)"); 
-            updateGameState();
-        }
-
-        function updateGameState(){
-            phrasesAnswered++; 
-            document.getElementById('score-val').innerText = score; 
-            setTimeout(nextQuestion, 800);
-        }
-
-        function endGame(){ 
-            document.getElementById('overlay').style.display='flex'; 
-            document.getElementById('ov-msg').innerText = score > 150 ? "¡Excelente!" : "Buen intento"; 
-            document.getElementById('ov-sub').innerText = `Has conseguido ${score} puntos`;
-        }
-    </script>
-</body>
-</html>
+    .instruction {
+        text-align: center; 
+        color: var(--gray); 
+        font-size: 0.75rem; 
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Ajustes para pantallas pequeñas */
+    @media (max-height: 650px) {
+        #score-val { font-size: 1.4rem; }
+        .blast-btn { padding: 12px; }
+        .russian-phrase { padding: 10px; font-size: 0.9rem; }
+    }
+</style>
